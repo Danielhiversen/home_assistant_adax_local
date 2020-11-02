@@ -1,0 +1,7 @@
+{
+    "name": "Adax local heaters",
+    "domains": [
+        "climate"
+    ],
+    "iot_class": "Local Polling"
+}
