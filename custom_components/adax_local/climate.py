@@ -3,17 +3,18 @@ import logging
 
 from homeassistant.components.climate import ClimateEntity
 from homeassistant.components.climate.const import (
-    SUPPORT_TARGET_TEMPERATURE,
     HVAC_MODE_HEAT,
+    SUPPORT_TARGET_TEMPERATURE,
 )
 from homeassistant.const import (
-    CONF_TOKEN,
-    TEMP_CELSIUS,
     ATTR_TEMPERATURE,
+    CONF_TOKEN,
     PRECISION_WHOLE,
+    TEMP_CELSIUS,
 )
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.util import slugify
+
 from .adax import Adax
 from .const import DEVICE_IP
 
@@ -58,7 +59,7 @@ class AdaxDevice(ClimateEntity):
     @property
     def unique_id(self):
         """Return a unique ID."""
-        return slugify(self._adax_data_handler.ip)
+        return slugify(self._adax_data_handler.ip_address)
 
     @property
     def available(self):

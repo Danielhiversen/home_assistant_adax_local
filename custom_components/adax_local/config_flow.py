@@ -2,9 +2,10 @@
 import logging
 
 import voluptuous as vol
-
 from homeassistant import config_entries, core, exceptions
 from homeassistant.const import CONF_TOKEN
+from homeassistant.util import slugify
+
 from .const import DEVICE_IP, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -34,7 +35,7 @@ class AdaxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 device_ip = user_input[DEVICE_IP].replace(" ", "")
                 token = user_input[CONF_TOKEN].replace(" ", "")
                 await validate_input(self.hass, device_ip)
-                unique_id = device_ip
+                unique_id = slugify(device_ip)
                 await self.async_set_unique_id(unique_id)
                 self._abort_if_unique_id_configured()
 
