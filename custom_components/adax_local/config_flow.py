@@ -5,7 +5,6 @@ import voluptuous as vol
 
 from homeassistant import config_entries, core, exceptions
 from homeassistant.const import CONF_TOKEN
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from .const import DEVICE_IP, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
