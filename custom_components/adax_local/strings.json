@@ -9,8 +9,8 @@
     "step": {
       "user": {
         "data": {
-          "account_id": "Account ID",
-          "password": "[%key:common::config_flow::data::password%]"
+          "device_ip": "Heater Ip",
+          "token": "Token"
         }
       }
     }

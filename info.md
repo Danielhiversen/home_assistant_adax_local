@@ -14,14 +14,16 @@ Please be careful and do NOT install this on production systems. Also make sure 
 {% endif %}
 
 # Features
-- Support for all Adax wifi heaters
+- Support for Adax wifi heaters
 - See temperature and set temperature
 - Change set temperature and turn on/off
 
 
 ## Configuration
 
-1. Run setup_adax.py to configure your heater for local access
+1. Install the dependency `pip install bleak`
+
+2. Run `python adax_config.py YOUR_WIFI_SSID YOUR_WIFI_PASSWORD` to configure your heater for local access. You do not need to run the script from the same computer as Home Assistant is running. The the heater and computer should not be to far away when the script is running.
 
 2. Go to integration page in HA, press + and search for Adax
    Enter your local ip
