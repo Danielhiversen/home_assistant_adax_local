@@ -4,28 +4,20 @@ import logging
 import voluptuous as vol
 
 from homeassistant import config_entries, core, exceptions
-from homeassistant.const import CONF_PASSWORD
+from homeassistant.const import CONF_TOKEN
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-from .adax import get_adax_token
-from .const import ACCOUNT_ID, DOMAIN
+from .const import DEVICE_IP, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-DATA_SCHEMA = vol.Schema(
-    {vol.Required(ACCOUNT_ID): int, vol.Required(CONF_PASSWORD): str}
-)
+DATA_SCHEMA = vol.Schema({vol.Required(DEVICE_IP): str, vol.Required(CONF_TOKEN): str})
 
 
-async def validate_input(hass: core.HomeAssistant, account_id, password):
+async def validate_input(hass: core.HomeAssistant, device_ip):
     """Validate the user input allows us to connect."""
     for entry in hass.config_entries.async_entries(DOMAIN):
-        if entry.data[ACCOUNT_ID] == account_id:
+        if entry.data[DEVICE_IP] == device_ip:
             raise AlreadyConfigured
-
-    token = await get_adax_token(async_get_clientsession(hass), account_id, password)
-    if token is None:
-        _LOGGER.info("Adax: Failed to login to retrieve token")
-        raise CannotConnect
 
 
 class AdaxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -40,16 +32,16 @@ class AdaxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             try:
-                account_id = user_input[ACCOUNT_ID]
-                password = user_input[CONF_PASSWORD].replace(" ", "")
-                await validate_input(self.hass, account_id, password)
-                unique_id = account_id
+                device_ip = user_input[DEVICE_IP].replace(" ", "")
+                token = user_input[CONF_TOKEN].replace(" ", "")
+                await validate_input(self.hass, device_ip)
+                unique_id = device_ip
                 await self.async_set_unique_id(unique_id)
                 self._abort_if_unique_id_configured()
 
                 return self.async_create_entry(
                     title=unique_id,
-                    data={ACCOUNT_ID: account_id, CONF_PASSWORD: password},
+                    data={DEVICE_IP: device_ip, CONF_TOKEN: token},
                 )
 
             except AlreadyConfigured:
