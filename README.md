@@ -12,9 +12,7 @@ Configure local access will remove the cloud access. Use https://github.com/Dani
 Use [hacs](https://hacs.xyz/docs/faq/custom_repositories) or copy the files to the custom_components folder in Home Assistant config.
 
 ## Configuration
-Go to integration page in HA, press + and search for Adax
-   Enter your Wifi ssid
-   Enter your Wifi password
+Go to integration page in HA, press + and search for Adax. Enter your Wifi ssid and Wifi password
 
 
 [releases]: https://github.com/Danielhiversen/home_assistant_adax_local/releases

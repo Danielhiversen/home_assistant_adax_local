@@ -19,6 +19,4 @@ Please be careful and do NOT install this on production systems. Also make sure 
 - Change set temperature and turn on/off
 
 ## Configuration
-Go to integration page in HA, press + and search for Adax
-   Enter your Wifi ssid
-   Enter your Wifi password
+Go to integration page in HA, press + and search for Adax. Enter your Wifi ssid and Wifi password
