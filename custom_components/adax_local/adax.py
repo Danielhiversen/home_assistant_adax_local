@@ -140,10 +140,12 @@ class AdaxConfig:
             return False
 
 
-async def scan_for_available_ble_device():
+async def scan_for_available_ble_device(retry=1):
     discovered = await bleak.discover(timeout=60)
     _LOGGER.debug(discovered)
     if not discovered:
+        if retry > 0:
+            return await scan_for_available_ble_device(retry - 1)
         raise HeaterNotFound
 
     for discovered_item in discovered:
@@ -171,6 +173,8 @@ async def scan_for_available_ble_device():
             _LOGGER.warning("Heater not available.")
             raise HeaterNotAvailable
         return discovered_item.address
+    if retry > 0:
+        return await scan_for_available_ble_device(retry - 1)
     raise HeaterNotFound
 
 
