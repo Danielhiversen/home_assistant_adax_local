@@ -59,7 +59,7 @@ class AdaxDevice(ClimateEntity):
     @property
     def unique_id(self):
         """Return a unique ID."""
-        return slugify(self._adax_data_handler.ip_address)
+        return slugify(self._adax_data_handler.device_ip)
 
     @property
     def available(self):
