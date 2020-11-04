@@ -15,7 +15,7 @@
           "wifi_ssid": "Wifi ssid",
           "wifi_pswd": "Wifi password"
         },
-        "description": "Press and hold OK button on the heater until the blue led starts blinking before pressing Submit. Configure heater might take some minutes."
+        "description": "Reset the heater by pressing + and OK for some seconds. Then press and hold OK button on the heater until the blue led starts blinking before pressing Submit. Configuring heater might take some minutes."
       }
     }
   }
