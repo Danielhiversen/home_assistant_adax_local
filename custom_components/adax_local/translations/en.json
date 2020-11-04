@@ -1,18 +1,22 @@
 {
-    "config": {
-        "abort": {
-            "already_configured": "Account is already configured"
+  "config": {
+    "abort": {
+      "already_configured": "The heater is already configured",
+      "heater_not_available": "Heater not available. Try to reset the heater by pressing + and OK for some seconds.",
+      "heater_not_found": "Heater not found. Try to move the heater closer to Home Assistant computer.",
+      "invalid_wifi_cred": "Wifi credentials are invalid."
+    },
+    "error": {
+      "connection_error": "Connection failed. Try to move the heater closer to Home Assistant computer. Make sure the blue led on the heater blinks."
+    },
+    "step": {
+      "user": {
+        "data": {
+          "wifi_ssid": "Wifi ssid",
+          "wifi_pswd": "Wifi password"
         },
-        "error": {
-            "connection_error": "Failed to connect"
-        },
-        "step": {
-            "user": {
-                "data": {
-                  "device_ip": "Heater Ip",
-                  "token": "Token"
-                }
-            }
-        }
+        "description": "Press and hold OK button on the heater until the blue led starts blinking before pressing Submit. Configure the heater may take a few minutes."
+      }
     }
+  }
 }
