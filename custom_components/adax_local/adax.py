@@ -43,6 +43,12 @@ class Adax:
                 self._url, params=payload, headers=self._headers
             ) as response:
                 _LOGGER.debug("Heater response %s", response.status)
+                if response.status != 200:
+                    _LOGGER.error(
+                        "Failed to set target temperature %s %s",
+                        response.status,
+                        response.reason,
+                    )
                 return response.status
 
     async def get_status(self):
@@ -53,6 +59,13 @@ class Adax:
                 async with self.websession.get(
                     self._url, params=payload, headers=self._headers
                 ) as response:
+                    if response.status != 200:
+                        _LOGGER.error(
+                            "Failed to get status %s %s",
+                            response.status,
+                            response.reason,
+                        )
+                        return None, None
                     response_json = await response.json()
         except asyncio.TimeoutError:
             return None, None
