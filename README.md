@@ -4,6 +4,7 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
 
 Custom component for using [Adax](https://adax.no/en/) heaters in Home Assistant with local access.
+Requires an Adax heater with both wifi and Bluetooth. Bluetooth is only used for configuring the heater for local access.
 Configure local access will remove the cloud access. Use https://github.com/Danielhiversen/home_assistant_adax/ for using the cloud API.
 
 [Support the developer](http://paypal.me/dahoiv)
