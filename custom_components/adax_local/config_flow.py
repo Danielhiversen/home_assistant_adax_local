@@ -38,15 +38,7 @@ class AdaxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 wifi_ssid = user_input[WIFI_SSID].replace(" ", "")
                 wifi_pswd = user_input[WIFI_PSWD].replace(" ", "")
                 configurator = AdaxConfig(wifi_ssid, wifi_pswd)
-                try:
-                    success = await configurator.configure_device()
-                except HeaterNotAvailable:
-                    return self.async_abort(reason="heater_not_available")
-                except HeaterNotFound:
-                    return self.async_abort(reason="heater_not_found")
-                except InvalidWifiCred:
-                    return self.async_abort(reason="invalid_wifi_cred")
-                if not success:
+                if not await configurator.configure_device():
                     raise CannotConnect
 
                 validate_input(self.hass, configurator.device_ip)
@@ -66,6 +58,12 @@ class AdaxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 return self.async_abort(reason="already_configured")
             except CannotConnect:
                 errors["base"] = "connection_error"
+            except HeaterNotAvailable:
+                return self.async_abort(reason="heater_not_available")
+            except HeaterNotFound:
+                return self.async_abort(reason="heater_not_found")
+            except InvalidWifiCred:
+                return self.async_abort(reason="invalid_wifi_cred")
 
         return self.async_show_form(
             step_id="user",
