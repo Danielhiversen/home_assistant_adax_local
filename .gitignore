@@ -1,0 +1,4 @@
+/brands_pr/
+__pycache__/
+*.py[cod]
+.idea/
