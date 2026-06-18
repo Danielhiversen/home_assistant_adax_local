@@ -8,6 +8,7 @@
   ],
   "codeowners": ["@danielhiversen"],
   "config_flow": true,
+  "dependencies": ["bluetooth"],
   "documentation": "https://github.com/Danielhiversen/home_assistant_adax_local",
   "integration_type": "device",
   "iot_class": "local_polling",
