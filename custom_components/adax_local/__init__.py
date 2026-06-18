@@ -1,22 +1,17 @@
 """The Adax heater integration."""
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import Platform
+from homeassistant.core import HomeAssistant
+
+PLATFORMS = [Platform.CLIMATE]
 
 
-async def async_setup(hass, config):
-    """Set up the Adax platform."""
-    return True
-
-
-async def async_setup_entry(hass, entry):
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up the Adax heater."""
-    hass.async_create_task(
-        hass.config_entries.async_forward_entry_setup(entry, "climate")
-    )
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
 
-async def async_unload_entry(hass, config_entry):
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
-    unload_ok = await hass.config_entries.async_forward_entry_unload(
-        config_entry, "climate"
-    )
-    return unload_ok
+    return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
