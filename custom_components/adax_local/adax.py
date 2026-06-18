@@ -6,10 +6,10 @@ import secrets
 import time
 import urllib
 
-import async_timeout
 import bleak
+from bleak_retry_connector import BleakClientWithServiceCache, establish_connection
 
-ADAX_DEVICE_TYPE_HEATER_BLE = 5
+ADAX_DEVICE_TYPE_HEATER_BLE = {5, 11, 17}
 BLE_COMMAND_STATUS_OK = 0
 BLE_COMMAND_STATUS_INVALID_WIFI = 1
 MAX_BYTES_IN_COMMAND_CHUNK = 17
@@ -38,7 +38,7 @@ class Adax:
             "time": int(time.time()),
             "value": int(target_temperature * 100),
         }
-        with async_timeout.timeout(self._timeout):
+        async with asyncio.timeout(self._timeout):
             async with self.websession.get(
                 self._url, params=payload, headers=self._headers
             ) as response:
@@ -55,7 +55,7 @@ class Adax:
         """Get heater status."""
         payload = {"command": "stat", "time": int(time.time())}
         try:
-            with async_timeout.timeout(self._timeout):
+            async with asyncio.timeout(self._timeout):
                 async with self.websession.get(
                     self._url, params=payload, headers=self._headers
                 ) as response:
@@ -93,7 +93,7 @@ class AdaxConfig:
         status = byte_list[0]
         _LOGGER.debug("notification_handler %s", byte_list)
         if status == BLE_COMMAND_STATUS_INVALID_WIFI:
-            _LOGGER.debug("Invalid WiFi credentials %s")
+            _LOGGER.debug("Invalid WiFi credentials")
             raise InvalidWifiCred
 
         if status == BLE_COMMAND_STATUS_OK and byte_list and len(byte_list) >= 5:
@@ -115,59 +115,60 @@ class AdaxConfig:
         _LOGGER.debug("device: %s", device)
         if not device:
             return False
-        async with bleak.BleakClient(device) as client:
-            _LOGGER.debug("connect")
-            await client.connect()
-            _LOGGER.debug("start_notify")
-            await client.start_notify(
-                UUID_ADAX_BLE_SERVICE_CHARACTERISTIC_COMMAND,
-                self.notification_handler,
+        client = await establish_connection(
+            BleakClientWithServiceCache,
+            device,
+            device.name or "Unknown",
+            max_attempts=3,
+        )
+        _LOGGER.debug("start_notify")
+        await client.start_notify(
+            UUID_ADAX_BLE_SERVICE_CHARACTERISTIC_COMMAND,
+            self.notification_handler,
+        )
+        ssid_encoded = urllib.parse.quote(self.wifi_ssid)
+        psk_encoded = urllib.parse.quote(self.wifi_psk)
+        access_token_encoded = urllib.parse.quote(self.access_token)
+        byte_list = list(
+            bytearray(
+                "command=join&ssid="
+                + ssid_encoded
+                + "&psk="
+                + psk_encoded
+                + "&token="
+                + access_token_encoded,
+                "ascii",
             )
-            ssid_encoded = urllib.parse.quote(self.wifi_ssid)
-            psk_encoded = urllib.parse.quote(self.wifi_psk)
-            access_token_encoded = urllib.parse.quote(self.access_token)
-            byte_list = list(
-                bytearray(
-                    "command=join&ssid="
-                    + ssid_encoded
-                    + "&psk="
-                    + psk_encoded
-                    + "&token="
-                    + access_token_encoded,
-                    "ascii",
+        )
+        _LOGGER.debug("write_command")
+        await write_command(byte_list, client)
+        k = 0
+        while k < 20 and client.is_connected and self.device_ip is None:
+            await asyncio.sleep(1)
+            k += 1
+        if self.device_ip:
+            _LOGGER.debug(
+                "Heater ip is {} and the token is {}".format(
+                    self.device_ip, self.access_token
                 )
             )
-            _LOGGER.debug("write_command")
-            await write_command(byte_list, client)
-            k = 0
-            while k < 20 and await client.is_connected() and self.device_ip is None:
-                await asyncio.sleep(1)
-                k += 1
-            if self.device_ip:
-                _LOGGER.debug(
-                    "Heater ip is {} and the token is {}".format(
-                        self.device_ip, self.access_token
-                    )
-                )
-                return True
-            return False
+            return True
+        return False
 
 
 async def scan_for_available_ble_device(retry=1):
-    discovered = await bleak.discover(timeout=60)
+    discovered = await bleak.BleakScanner.discover(timeout=60, return_adv=True)
     _LOGGER.debug(discovered)
     if not discovered:
         if retry > 0:
             return await scan_for_available_ble_device(retry - 1)
         raise HeaterNotFound
 
-    for discovered_item in discovered:
-        metadata = discovered_item.metadata
-        uuids = metadata.get("uuids")
-        if uuids is None or UUID_ADAX_BLE_SERVICE not in uuids:
+    for device, adv_data in discovered.values():
+        if UUID_ADAX_BLE_SERVICE not in adv_data.service_uuids:
             continue
-        _LOGGER.info("Found Adax heater %s", discovered_item)
-        manufacturer_data = metadata.get("manufacturer_data")
+        _LOGGER.info("Found Adax heater %s", device)
+        manufacturer_data = adv_data.manufacturer_data
         _LOGGER.debug("manufacturer_data %s", manufacturer_data)
         if not manufacturer_data:
             continue
@@ -185,7 +186,7 @@ async def scan_for_available_ble_device(retry=1):
         if not device_available(manufacturer_data_list):
             _LOGGER.warning("Heater not available.")
             raise HeaterNotAvailable
-        return discovered_item.address
+        return device
     if retry > 0:
         return await scan_for_available_ble_device(retry - 1)
     raise HeaterNotFound
@@ -193,7 +194,7 @@ async def scan_for_available_ble_device(retry=1):
 
 def device_available(manufacturer_data):
     _LOGGER.debug("device_available")
-    if not manufacturer_data and len(manufacturer_data) < 10:
+    if not manufacturer_data or len(manufacturer_data) < 10:
         return False
 
     type_id = manufacturer_data[0]
@@ -206,7 +207,7 @@ def device_available(manufacturer_data):
     _LOGGER.debug("device_available %s %s %s %s", mac_id, type_id, registered, managed)
     return (
         mac_id
-        and type_id == ADAX_DEVICE_TYPE_HEATER_BLE
+        and type_id in ADAX_DEVICE_TYPE_HEATER_BLE
         and not registered
         and not managed
     )
