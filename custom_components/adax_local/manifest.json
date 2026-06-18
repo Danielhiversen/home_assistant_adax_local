@@ -1,6 +1,11 @@
 {
   "domain": "adax_local",
   "name": "Adax Local",
+  "bluetooth": [
+    {
+      "service_uuid": "3885cc10-7c18-4ad4-a48d-bf11abf7cb92"
+    }
+  ],
   "codeowners": ["@danielhiversen"],
   "config_flow": true,
   "documentation": "https://github.com/Danielhiversen/home_assistant_adax_local",

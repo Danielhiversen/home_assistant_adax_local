@@ -4,7 +4,9 @@
       "already_configured": "The heater is already configured",
       "heater_not_available": "Heater not available. Try to reset the heater by pressing + and OK for some seconds.",
       "heater_not_found": "Heater not found. Try to move the heater closer to Home Assistant computer.",
-      "invalid_wifi_cred": "Wifi credentials are invalid."
+      "invalid_wifi_cred": "Wifi credentials are invalid.",
+      "wrong_heater": "The configured heater does not match the one being reconfigured.",
+      "reconfigure_successful": "Heater reconfigured successfully."
     },
     "error": {
       "connection_error": "Connection failed. Try to move the heater closer to Home Assistant computer. Make sure the blue led on the heater blinks."
@@ -16,6 +18,13 @@
           "wifi_pswd": "Wifi password"
         },
         "description": "Reset the heater by pressing + and OK for some seconds. Then press and hold OK button on the heater until the blue led starts blinking before pressing Submit. Configuring heater might take some minutes."
+      },
+      "reconfigure": {
+        "data": {
+          "wifi_ssid": "Wifi ssid",
+          "wifi_pswd": "Wifi password"
+        },
+        "description": "Re-pair the heater: reset it by pressing + and OK for some seconds, then press and hold OK until the blue led starts blinking before pressing Submit. The heater must be the same one already configured."
       }
     }
   }

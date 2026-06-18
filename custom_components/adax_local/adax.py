@@ -87,6 +87,7 @@ class AdaxConfig:
         self.wifi_psk = wifi_psk
         self.access_token = secrets.token_hex(10)
         self.device_ip = None
+        self.mac_id = None
 
     def notification_handler(self, _, data):
         if not data:
@@ -118,6 +119,7 @@ class AdaxConfig:
         _LOGGER.debug("device: %s", device)
         if not device:
             return False
+        self.mac_id = device.address
         client = await establish_connection(
             BleakClientWithServiceCache,
             device,

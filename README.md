@@ -44,6 +44,8 @@ The integration is set up entirely from the UI — no YAML.
 
 Configuring the heater can take a few minutes. Keep the heater close to the Home Assistant machine during this step.
 
+Home Assistant may also **auto-discover** the heater over Bluetooth and surface it under **Settings → Devices & Services**; selecting it jumps straight to the wifi step. To re-pair later (for example after a wifi change) without removing the entity and losing its history, use the integration's **Reconfigure** option.
+
 Each heater is added as a single `climate` entity:
 
 | Capability | Value |
