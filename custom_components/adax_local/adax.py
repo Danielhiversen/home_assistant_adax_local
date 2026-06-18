@@ -8,7 +8,7 @@ import time
 import urllib
 
 import bleak
-from bleak_retry_connector import BleakClientWithServiceCache, establish_connection
+from bleak_retry_connector import establish_connection
 
 ADAX_DEVICE_TYPE_HEATER_BLE = {5, 11, 17}
 BLE_COMMAND_STATUS_OK = 0
@@ -120,8 +120,11 @@ class AdaxConfig:
         if not device:
             return False
         self.mac_id = device.address
+        # Use a plain BleakClient (not the service-cache variant) so the GATT
+        # services are discovered fresh on every pairing. A re-paired heater can
+        # otherwise hit a stale service cache that lacks the command characteristic.
         client = await establish_connection(
-            BleakClientWithServiceCache,
+            bleak.BleakClient,
             device,
             device.name or "Unknown",
             max_attempts=3,
