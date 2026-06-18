@@ -39,6 +39,7 @@ class Adax:
             "time": int(time.time()),
             "value": int(target_temperature * 100),
         }
+        status = None
         async with asyncio.timeout(self._timeout):
             async with self.websession.get(
                 self._url, params=payload, headers=self._headers
@@ -50,7 +51,8 @@ class Adax:
                         response.status,
                         response.reason,
                     )
-                return response.status
+                status = response.status
+        return status
 
     async def get_status(self):
         """Get heater status."""
