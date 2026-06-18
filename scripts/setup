@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Set up the development environment.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+python3 -m venv venv
+# shellcheck disable=SC1091
+source venv/bin/activate
+
+pip install --upgrade pip
+pip install -r requirements-dev.txt
+pre-commit install
+
+echo
+echo "Development environment ready."
+echo "  Activate it with:        source venv/bin/activate"
+echo "  Run all checks manually: pre-commit run --all-files"

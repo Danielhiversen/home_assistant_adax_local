@@ -30,10 +30,12 @@ The integration is **local polling** — no push from the device; Home Assistant
 
 ## Commands / CI
 
-There is no local test/build harness. Validation is done by CI and can be reproduced locally:
+There is no test/build harness; the checks are formatting, linting, and Home Assistant manifest/structure validation.
 
-- **Formatting**: `black .` (CI auto-formats and pushes fixes).
-- **Linting**: `flake8 --max-line-length=120`.
-- **Home Assistant manifest/structure validation**: `hassfest` (run via the `home-assistant/actions/hassfest` action) and HACS validation (`hacs/integration/action`).
+- **Bootstrap**: `./scripts/setup` — creates `venv/`, installs `requirements-dev.txt`, and runs `pre-commit install`.
+- **Run all checks**: `pre-commit run --all-files` (black + flake8 + basic file hooks).
+- **Formatting**: `black .` (CI checks with `--check`, pinned to the version in `.pre-commit-config.yaml` / `lint.yaml`; it does not auto-fix).
+- **Linting**: `flake8 .` (config in `.flake8`: line length 120, `E203`/`W503` ignored for black compatibility).
+- **HA validation**: `hassfest` (via `home-assistant/actions/hassfest`) and HACS validation (`hacs/integration/action`) run in CI.
 
-When changing code, run `black .` and `flake8 --max-line-length=120` before committing to match CI. Bump `version` in `manifest.json` for releases.
+`pre-commit` runs black/flake8 on every commit. Keep the pinned versions in `.pre-commit-config.yaml`, `requirements-dev.txt`, and `lint.yaml` in sync. Bump `version` in `manifest.json` for releases.

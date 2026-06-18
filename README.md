@@ -65,6 +65,16 @@ Each heater is added as a single `climate` entity:
 
 If the heater changes IP address on your network, re-adding it may be required; assigning it a static/reserved IP in your router is recommended.
 
+## Development
+
+```bash
+./scripts/setup          # create venv, install dev deps, install pre-commit hooks
+source venv/bin/activate
+pre-commit run --all-files   # run black + flake8 across the repo
+```
+
+Commits are checked by `pre-commit` (black + flake8) using the same versions as CI. To test changes against a running Home Assistant, copy `custom_components/adax_local` into your HA `config/custom_components/` directory and restart.
+
 ## Credits
 
 The device communication is based on [pyAdaxLocal](https://github.com/Danielhiversen/pyAdaxLocal). Maintained by [@Danielhiversen](https://github.com/Danielhiversen).
