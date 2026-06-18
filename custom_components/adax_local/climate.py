@@ -1,4 +1,5 @@
 """Support for Adax wifi-enabled home heaters."""
+
 import logging
 
 from homeassistant.components.climate import (
