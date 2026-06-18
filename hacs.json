@@ -1,7 +1,4 @@
 {
     "name": "Adax local heaters",
-    "domains": [
-        "climate"
-    ],
-    "iot_class": "Local Polling"
+    "homeassistant": "2025.8.0"
 }
