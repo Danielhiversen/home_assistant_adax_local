@@ -6,15 +6,14 @@ import logging
 from datetime import timedelta
 
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_SCAN_INTERVAL
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .adax import Adax
-from .const import DOMAIN
+from .const import DEFAULT_SCAN_INTERVAL, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
-
-SCAN_INTERVAL = timedelta(seconds=60)
 
 
 class AdaxLocalCoordinator(DataUpdateCoordinator[dict[str, float | None]]):
@@ -26,7 +25,9 @@ class AdaxLocalCoordinator(DataUpdateCoordinator[dict[str, float | None]]):
             hass,
             _LOGGER,
             name=f"{DOMAIN} {adax.device_ip}",
-            update_interval=SCAN_INTERVAL,
+            update_interval=timedelta(
+                seconds=entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
+            ),
             config_entry=entry,
         )
         self.adax = adax

@@ -27,5 +27,15 @@
         "description": "Re-pair the heater: reset it by pressing + and OK for some seconds, then press and hold OK until the blue led starts blinking before pressing Submit. The heater must be the same one already configured."
       }
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "scan_interval": "Polling interval (seconds)"
+        },
+        "description": "How often Home Assistant reads the temperature from the heater."
+      }
+    }
   }
 }

@@ -7,25 +7,44 @@ from typing import Any
 
 import voluptuous as vol
 from homeassistant.components.bluetooth import BluetoothServiceInfoBleak
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
-from homeassistant.const import CONF_TOKEN
+from homeassistant.config_entries import (
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlowWithReload,
+)
+from homeassistant.const import CONF_SCAN_INTERVAL, CONF_TOKEN
+from homeassistant.core import callback
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.device_registry import format_mac
 
 from .adax import AdaxConfig, HeaterNotAvailable, HeaterNotFound, InvalidWifiCred
-from .const import DEVICE_IP, DOMAIN
+from .const import DEFAULT_SCAN_INTERVAL, DEVICE_IP, DOMAIN
 
 WIFI_SSID = "wifi_ssid"
 WIFI_PSWD = "wifi_pswd"
 _LOGGER = logging.getLogger(__name__)
 
 DATA_SCHEMA = vol.Schema({vol.Required(WIFI_SSID): str, vol.Required(WIFI_PSWD): str})
+OPTIONS_SCHEMA = vol.Schema(
+    {
+        vol.Optional(CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL): vol.All(
+            vol.Coerce(int), vol.Range(min=10, max=3600)
+        ),
+    }
+)
 
 
 class AdaxConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Adax integration."""
 
     VERSION = 1
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: ConfigEntry) -> AdaxOptionsFlow:
+        """Create the options flow."""
+        return AdaxOptionsFlow()
 
     async def async_step_bluetooth(
         self, discovery_info: BluetoothServiceInfoBleak
@@ -89,6 +108,24 @@ class AdaxConfigFlow(ConfigFlow, domain=DOMAIN):
             step_id=step_id,
             data_schema=DATA_SCHEMA,
             errors=errors,
+        )
+
+
+class AdaxOptionsFlow(OptionsFlowWithReload):
+    """Handle Adax options (auto-reloads the entry on change)."""
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Manage the options."""
+        if user_input is not None:
+            return self.async_create_entry(data=user_input)
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=self.add_suggested_values_to_schema(
+                OPTIONS_SCHEMA, self.config_entry.options
+            ),
         )
 
 
