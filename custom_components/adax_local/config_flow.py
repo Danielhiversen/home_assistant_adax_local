@@ -42,8 +42,8 @@ class AdaxConfigFlow(ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             try:
-                wifi_ssid = user_input[WIFI_SSID].replace(" ", "")
-                wifi_pswd = user_input[WIFI_PSWD].replace(" ", "")
+                wifi_ssid = user_input[WIFI_SSID].strip()
+                wifi_pswd = user_input[WIFI_PSWD].strip()
                 configurator = AdaxConfig(wifi_ssid, wifi_pswd)
                 if not await configurator.configure_device():
                     raise CannotConnect

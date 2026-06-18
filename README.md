@@ -60,7 +60,7 @@ Each heater is added as a single `climate` entity:
 | **Heater not found** | The heater wasn't discovered over Bluetooth. Move it closer to the Home Assistant machine and retry. |
 | **Heater not available** | The heater isn't in a pairable state. Reset it (hold **+** and **OK** for a few seconds) and try again. |
 | **Connection failed** | Pairing started but didn't complete. Move the heater closer and make sure the **blue LED is blinking** before submitting. |
-| **Wifi credentials are invalid** | The SSID/password were rejected by the heater. Double-check them (note: spaces are stripped from both fields). |
+| **Wifi credentials are invalid** | The SSID/password were rejected by the heater. Double-check them (only leading/trailing whitespace is trimmed; internal spaces are kept). |
 | **The heater is already configured** | This heater (by its assigned IP) is already added in Home Assistant. |
 
 If the heater changes IP address on your network, re-adding it may be required; assigning it a static/reserved IP in your router is recommended.
