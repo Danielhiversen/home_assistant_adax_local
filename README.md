@@ -1,4 +1,4 @@
-# Adax heaters
+# Adax heaters, this is integration is moved to Home Asssistant as an official integration
 ![Validate with hassfest](https://github.com/Danielhiversen/home_assistant_adax_local/workflows/Validate%20with%20hassfest/badge.svg)
 [![GitHub Release][releases-shield]][releases]
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
